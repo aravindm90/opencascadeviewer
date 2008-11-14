@@ -1,0 +1,3 @@
+Do poprawnego działania programu trzeba mieć zainstalowane OpenCascade w wersji 6.2. Do ściągnięcia tutaj:
+
+files.opencascade.com/OCC_6.2_release/OpenCASCADE_win32.exe 
