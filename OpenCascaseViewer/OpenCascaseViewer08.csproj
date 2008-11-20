@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Code\Bottle.cs" />
+    <Compile Include="Code\Utility.cs" />
     <Compile Include="DrawingControl.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -20,10 +20,10 @@ namespace OpenCascaseViewer
         public Matrix World { get; set; }
         public Matrix Projection { get; set; }
 
-        private Vector3 camera = new Vector3(0, 300, 150);
+        private Vector3 camera = new Vector3(0, 500, 550);
 
-        private VertexPositionNormalTexture[] vertexData;
-        private int[] indexDataTriangles;
+        public VertexPositionNormalTexture[] vertexData;
+        public int[] indexDataTriangles;
 
 
         protected override void Initialize()
@@ -63,14 +63,28 @@ namespace OpenCascaseViewer
             indexDataTriangles = new int[3];
         }
 
+        public void Fill(gp.Pnt[] points, gp.Pnt2d[] uvpoints, int[] triangles)
+        {
+            vertexData = new Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture[points.Length];
+            for (int i = 0; i < points.Length; i++)
+            {
+                Vector3 pos = new Vector3((float)points[i].x, (float)points[i].y, (float)points[i].z);
+                pos *= 50;
+                Vector2 tex = new Vector2((float)uvpoints[i].x, (float)uvpoints[i].y);
+                vertexData[i] = new Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture(
+                    pos, Microsoft.Xna.Framework.Vector3.Up, tex);
+            }
+            indexDataTriangles = triangles;
+        }
+
         protected override void Draw()
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Azure);
 
             GraphicsDevice.VertexDeclaration = vertexDeclaration;
             GraphicsDevice.RenderState.DepthBufferEnable = true;
 
-            GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
+            GraphicsDevice.RenderState.CullMode = CullMode.None;
 
             textureEffect.World = World;
             textureEffect.View = View;
