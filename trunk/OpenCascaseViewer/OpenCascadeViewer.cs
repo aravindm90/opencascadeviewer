@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace OpenCascaseViewer
 {
+
     public partial class OpenCascadeViewer : Form
     {
         public List<TopoDS.Shape> viewedShapes = new List<TopoDS.Shape>();
@@ -14,14 +15,26 @@ namespace OpenCascaseViewer
         public OpenCascadeViewer()
         {
             InitializeComponent();
-
-            TopoDS.Shape s = OpenCascaseViewer.Code.Bottle.MakeBottle(12, 44, 2);
-      
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            TopoDS.Shape topoShape = OpenCascaseViewer.Code.Bottle.MakeBottle(12, 44, 2);
+
+            gp.Pnt[] points = null;
+            gp.Pnt2d[] uvpoints = null;
+            int[] triangles = null;
+
+            Utility.Triangulate(topoShape, out points, out uvpoints, out triangles);
+
+            drawingControl1.Fill(points, uvpoints, triangles);
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -32,8 +45,8 @@ namespace OpenCascaseViewer
                 string type = parts[parts.Length - 1];
                 type = type.ToUpper();
                 switch (type)
-                {                    
-                    case "IGES":                 
+                {
+                    case "IGES":
                         IGESControl.Reader igesReader = new IGESControl.Reader();
                         if (igesReader.ReadFile(openFileDialog1.FileName) == IFSelect.ReturnStatus.RetDone)
                         {
@@ -44,7 +57,7 @@ namespace OpenCascaseViewer
                         else
                             MessageBox.Show("Could not load file " + openFileDialog1.FileName);
                         break;
-                    
+
                     case "STEP":
                         STEPControl.Reader stepReader = new STEPControl.Reader();
                         if (stepReader.ReadFile(openFileDialog1.FileName) == IFSelect.ReturnStatus.RetDone)
@@ -57,16 +70,16 @@ namespace OpenCascaseViewer
                                 int numberOfShapes = stepReader.NbShapes();
                                 for (int i = 1; i <= numberOfShapes; i++)
                                     viewedShapes.Add(stepReader.Shape(i));
-                            }                            
+                            }
                         }
                         else
                             MessageBox.Show("Could not load file " + openFileDialog1.FileName);
                         break;
 
                     //case "CSFDB":
-                        
+
                     //    break;
-                    case "BREP":                        
+                    case "BREP":
                         TopoDS.Shape shape = new TopoDS.Shape();
                         BRep.Builder builder = new BRep.Builder(); ;
                         if (BRepTools.General.Read(shape, openFileDialog1.FileName, builder))
@@ -75,13 +88,13 @@ namespace OpenCascaseViewer
                             viewedShapes.Add(shape);
                         }
                         else
-                            MessageBox.Show("Could not load file " + openFileDialog1.FileName);                        
+                            MessageBox.Show("Could not load file " + openFileDialog1.FileName);
                         break;
                     default:
                         MessageBox.Show("Unknown format \"" + type + "\"");
                         break;
-                }                
-               
+                }
+
             }
         }
 
