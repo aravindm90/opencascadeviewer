@@ -69,7 +69,9 @@ namespace OpenCascaseViewer
             for (int i = 0; i < points.Length; i++)
             {
                 Vector3 pos = new Vector3((float)points[i].x, (float)points[i].y, (float)points[i].z);
-                pos *= 50;
+                pos.X *= 50;
+                pos.Y *= 50;
+                pos *= 5;
                 Vector2 tex = new Vector2((float)uvpoints[i].x, (float)uvpoints[i].y);
                 vertexData[i] = new Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture(
                     pos, Microsoft.Xna.Framework.Vector3.Up, tex);
@@ -79,7 +81,7 @@ namespace OpenCascaseViewer
 
         protected override void Draw()
         {
-            GraphicsDevice.Clear(Color.Azure);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             GraphicsDevice.VertexDeclaration = vertexDeclaration;
             GraphicsDevice.RenderState.DepthBufferEnable = true;
@@ -125,6 +127,9 @@ namespace OpenCascaseViewer
             foreach (EffectPass pass in colorEffect.CurrentTechnique.Passes)
             {
                 pass.Begin();
+
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList,
+               vertexData, 0, vertexData.Length, indexDataTriangles, 0, indexDataTriangles.Length / 3);              
 
       
                 pass.End();
