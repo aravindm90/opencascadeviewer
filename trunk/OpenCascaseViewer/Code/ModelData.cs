@@ -12,7 +12,7 @@ namespace OpenCascaseViewer
         public void Add(TopoDS.Shape shape)
         {
             viewedShapes.Add(shape);
-            triangulations.Add(Utility.Triangulate(shape));
+            triangulations.AddRange(Utility.Triangulate(shape));
         }
 
         public void Clear()
