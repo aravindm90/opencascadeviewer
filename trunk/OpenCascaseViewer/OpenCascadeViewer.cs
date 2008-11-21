@@ -25,16 +25,26 @@ namespace OpenCascaseViewer
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
+            if (viewedShapes.Count == 0)
+            {
+                TopoDS.Shape bottle = OpenCascaseViewer.Code.Bottle.MakeBottle(12, 44, 2);
+                gp.Pnt[] points = null;
+                gp.Pnt2d[] uvpoints = null;
+                int[] triangles = null;
+                Utility.Triangulate(bottle, out points, out uvpoints, out triangles);
+                drawingControl1.Fill(points, uvpoints, triangles);
+                return;
+            }
 
-            TopoDS.Shape topoShape = OpenCascaseViewer.Code.Bottle.MakeBottle(12, 44, 2);
-
-            gp.Pnt[] points = null;
-            gp.Pnt2d[] uvpoints = null;
-            int[] triangles = null;
-
-            Utility.Triangulate(topoShape, out points, out uvpoints, out triangles);
-
-            drawingControl1.Fill(points, uvpoints, triangles);
+            List<TopoDS.Shape>.Enumerator iterator = viewedShapes.GetEnumerator();
+            while (iterator.MoveNext())
+            {
+                gp.Pnt[] points = null;
+                gp.Pnt2d[] uvpoints = null;
+                int[] triangles = null;
+                Utility.Triangulate(iterator.Current, out points, out uvpoints, out triangles);
+                drawingControl1.Fill(points, uvpoints, triangles);
+            }
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
