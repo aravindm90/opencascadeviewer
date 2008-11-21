@@ -72,18 +72,37 @@ namespace OpenCascaseViewer
 
         public void Fill(gp.Pnt[] points, gp.Pnt2d[] uvpoints, int[] triangles)
         {
+            Vector3 edge1, edge2, normal;
+            uint[] normalsCount = new uint[points.Length];
+            Vector3[] normals = new Vector3[points.Length];
             VertexPositionNormalTexture[] vertex = new Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture[points.Length];
             
+            for (int ind = 0; ind < triangles.Length; ind += 3)
+            {
+                edge1 = new Vector3(
+                    (float)(points[triangles[ind]].x - points[triangles[ind+1]].x),
+                    (float)(points[triangles[ind]].x - points[triangles[ind+1]].x),
+                    (float)(points[triangles[ind]].x - points[triangles[ind+1]].x));
+                edge2 = new Vector3(
+                    (float)(points[triangles[ind + 2]].x - points[triangles[ind+1]].x),
+                    (float)(points[triangles[ind + 2]].x - points[triangles[ind+1]].x),
+                    (float)(points[triangles[ind + 2]].x - points[triangles[ind+1]].x));
+                Vector3.Cross(ref edge1, ref edge2, out normal);
+                normals[triangles[ind]] += normal;
+                ++normalsCount[triangles[ind]];
+                normals[triangles[ind + 1]] += normal;
+                ++normalsCount[triangles[ind+1]];
+                normals[triangles[ind + 2]] += normal;
+                ++normalsCount[triangles[ind+2]];
+            }
             for (int i = 0; i < points.Length; i++)
             {
+                normals[i] /= (float)normalsCount[i];
                 Vector3 pos = new Vector3((float)points[i].x, (float)points[i].y, (float)points[i].z);
-                //pos.X *= 50;
-                //pos.Y *= 50;
-                //pos.Z *= 0.1f;
-                pos *= 5;
+                //pos *= 5;
                 Vector2 tex = new Vector2((float)uvpoints[i].x, (float)uvpoints[i].y);
                 vertex[i] = new Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture(
-                    pos, Microsoft.Xna.Framework.Vector3.Up, tex);
+                    pos, normals[i], tex);
             }
 
             indexDataTriangles.Add(triangles);

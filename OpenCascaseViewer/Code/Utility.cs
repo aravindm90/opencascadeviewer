@@ -33,28 +33,18 @@ namespace OpenCascaseViewer
 
                 TColgp.Array1OfPnt p3d = triangulation.Nodes();
 
-                gp.Pnt average = new gp.Pnt(0.0, 0.0, 0.0);
                 points = new gp.Pnt[p3d.Length()];
                 for (int i = 0; i < points.Length; ++i)
                 {
                     points[i] = p3d.Value(i + 1);
-                    average.x += points[i].x;
-                    average.y += points[i].y;
-                    average.z += points[i].z;
                 }
-                average.x /= points.Length;
-                average.y /= points.Length;
-                average.z /= points.Length;
-                //if (location != null)
+                
                 if (location != null)
                 {
                     gp.Trsf trsf = location.Transformation();
                     for (int i = 0; i < points.Length; ++i)
                     {
                         trsf.Transforms(out points[i].x, out points[i].y, out points[i].z);
-                        points[i].x -= average.x;
-                        points[i].y -= average.y;
-                        points[i].z -= average.z;
                     }
                 }
                 TColgp.Array1OfPnt2d p2d = triangulation.UVNodes();
