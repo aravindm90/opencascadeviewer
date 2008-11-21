@@ -116,7 +116,7 @@ namespace OpenCascaseViewer
 
             textureEffect.End();
 
-            colorEffect.World = World;
+           /* colorEffect.World = World;
             colorEffect.View = View;
             colorEffect.Projection = Projection;
 
@@ -129,13 +129,13 @@ namespace OpenCascaseViewer
                 pass.Begin();
 
                 GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList,
-               vertexData, 0, vertexData.Length, indexDataTriangles, 0, indexDataTriangles.Length / 3);              
+              vertexData, 0, vertexData.Length, indexDataTriangles, 0, indexDataTriangles.Length / 3);              
 
       
                 pass.End();
             }
 
-            colorEffect.End();
+            colorEffect.End();*/
         }
        
 
