@@ -20,7 +20,7 @@ namespace OpenCascaseViewer
         public Matrix World { get; set; }
         public Matrix Projection { get; set; }
 
-        private Vector3 camera = new Vector3(0, 500, 550);
+        private Vector3 camera = new Vector3(0, 0, 550);
 
         public List<VertexPositionNormalTexture[]> vertexData;
         public List<int[]> indexDataTriangles;
@@ -165,6 +165,23 @@ namespace OpenCascaseViewer
         float xAngle, yAngle;
         MouseState lastMouseState;
 
+        protected override void OnMouseWheel(System.Windows.Forms.MouseEventArgs e)
+        {
+            base.OnMouseWheel(e);
+            MouseState newState = Mouse.GetState();
+
+            if (newState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            {
+                float zDiff = (float)e.Delta / 4;
+
+                World *= Matrix.CreateTranslation(0.0f, 0.0f, zDiff);
+
+                Invalidate();
+            }
+            
+            lastMouseState = newState;
+        }
+
         protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
         {
             base.OnMouseMove(e);
@@ -175,12 +192,28 @@ namespace OpenCascaseViewer
                 int yDiff = lastMouseState.Y - newState.Y;
                 int xDiff = lastMouseState.X - newState.X;
 
+                xAngle = yDiff / 2;
+                yAngle = xDiff / 2;
+
+                Vector3 trans = World.Translation;
+
+                World *= Matrix.CreateTranslation(-trans) *
+                    Matrix.CreateRotationZ(MathHelper.ToRadians((yAngle)))
+                    * Matrix.CreateRotationX(MathHelper.ToRadians(MathHelper.Clamp(xAngle, -90, 90)))
+                    * Matrix.CreateTranslation(trans);
+
+                Invalidate();
+            }
+            if (newState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            {
+                int yDiff = lastMouseState.Y - newState.Y;
+                int xDiff = - lastMouseState.X + newState.X;
+
                 xAngle += yDiff / 2;
                 yAngle -= xDiff / 2;
 
-                World =
-                    Matrix.CreateRotationZ(MathHelper.ToRadians((yAngle)))
-                    * Matrix.CreateRotationX(MathHelper.ToRadians(MathHelper.Clamp(xAngle, -90, 90)));
+                World *=
+                    Matrix.CreateTranslation(xDiff, yDiff, 0);
 
                 Invalidate();
             }
