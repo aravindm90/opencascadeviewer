@@ -87,7 +87,7 @@ namespace OpenCascaseViewer
         private void sampleShapeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             data.Clear();
-            data.Add(Bottle.MakeBottle(12, 44, 2));
+            data.Add(Bottle.MakeBottle(12, 24, 4));
             drawingControl1.SyncBuffers();
         }
 

@@ -194,7 +194,7 @@ namespace OpenCascaseViewer
             {
                 float zDiff = (float)e.Delta / 60.0f;
 
-                World *= Matrix.CreateTranslation(0.0f, 0.0f, zDiff);
+                World *= Matrix.CreateScale(zDiff);
 
                 Invalidate();
             }

@@ -6,31 +6,20 @@ namespace OpenCascaseViewer
 {
     public class Utility
     {
-        public static TessalatedShape Triangulate(TopoDS.Shape topoShape)
-        {
-            TessalatedShape shape = new TessalatedShape();
-            Triangulate(topoShape, out shape.points, out shape.uvpoints, out shape.triangles);
-            shape.topoShape = topoShape;
-            return shape;
-        }
 
-        public static void Triangulate(TopoDS.Shape topoShape, out gp.Pnt[] points, out gp.Pnt2d[] uvpoints, out int[] triangles)
+        public static List<TessalatedShape> Triangulate(TopoDS.Shape topoShape)
         {
             TopExp.Explorer ex = new TopExp.Explorer(topoShape, TopAbs.ShapeEnum.FACE, TopAbs.ShapeEnum.SHAPE);
 
-            BRepMesh.General.Mesh(topoShape, 0.01);
+            BRepMesh.General.Mesh(topoShape, 0.1);
 
-            points = null;
-            uvpoints = null;
-            triangles = null;
-
-            List<gp.Pnt> pointsL = new List<gp.Pnt>();
-            List<gp.Pnt2d> uvpointL = new List<gp.Pnt2d>();
-            List<int> trianglesL = new List<int>();
+            List<TessalatedShape> faces = new List<TessalatedShape>();
 
             // Loop all faces
             while (ex.More())
             {
+
+                TessalatedShape shape = new TessalatedShape();
 
                 TopoDS.Face F = TopoDS.General.Face(ex.Current());
                 TopLoc.Location location = new TopLoc.Location();
@@ -41,53 +30,50 @@ namespace OpenCascaseViewer
 
                 TColgp.Array1OfPnt p3d = triangulation.Nodes();
 
-                points = new gp.Pnt[p3d.Length()];
-                for (int i = 0; i < points.Length; ++i)
+                shape.points = new gp.Pnt[p3d.Length()];
+                for (int i = 0; i < shape.points.Length; ++i)
                 {
-                    points[i] = p3d.Value(i + 1);
+                    shape.points[i] = p3d.Value(i + 1);
                 }
                 
                 if (location != null)
                 {
                     gp.Trsf trsf = location.Transformation();
-                    for (int i = 0; i < points.Length; ++i)
+                    for (int i = 0; i < shape.points.Length; ++i)
                     {
-                        trsf.Transforms(out points[i].x, out points[i].y, out points[i].z);
+                        trsf.Transforms(out shape.points[i].x, out shape.points[i].y, out shape.points[i].z);
                     }
                 }
                 TColgp.Array1OfPnt2d p2d = triangulation.UVNodes();
                 if (p2d != null)
                 {
-                    uvpoints = new gp.Pnt2d[p2d.Length()];
-                    for (int i = 0; i < uvpoints.Length; ++i)
+                    shape.uvpoints = new gp.Pnt2d[p2d.Length()];
+                    for (int i = 0; i < shape.uvpoints.Length; ++i)
                     {
-                        uvpoints[i] = p2d.Value(i + 1);
+                        shape.uvpoints[i] = p2d.Value(i + 1);
                     }
                 }
                 else
                 {
-                    uvpoints = null;
+                    shape.uvpoints = null;
                 }
-                triangles = new int[arrayOfTriangle.Length() * 3];
+                shape.triangles = new int[arrayOfTriangle.Length() * 3];
                 int l = arrayOfTriangle.Length();
                 for (int i = 0; i < l; ++i)
                 {
                     Poly.Triangle t = arrayOfTriangle.Value(i + 1);
-                    triangles[3 * i] = t.Value(1) - 1;
-                    triangles[3 * i + 1] = t.Value(2) - 1;
-                    triangles[3 * i + 2] = t.Value(3) - 1;
+                    shape.triangles[3 * i] = t.Value(1) - 1;
+                    shape.triangles[3 * i + 1] = t.Value(2) - 1;
+                    shape.triangles[3 * i + 2] = t.Value(3) - 1;
                 }
 
-                pointsL.AddRange(points);
-                uvpointL.AddRange(uvpoints);
-                trianglesL.AddRange(triangles);
+                faces.Add(shape);
 
                 ex.Next();
             }
 
-            points = pointsL.ToArray();
-            uvpoints = uvpointL.ToArray();
-            triangles = trianglesL.ToArray();
+            return faces;
+
         }
     }
 }
