@@ -35,13 +35,16 @@ namespace OpenCascaseViewer
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.drawingControl1 = new OpenCascaseViewer.DrawingControl();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sampleShapeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(577, 24);
@@ -95,6 +98,21 @@ namespace OpenCascaseViewer
             // 
             this.openFileDialog1.Filter = "All files|*.*";
             // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sampleShapeToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.editToolStripMenuItem.Text = "View";
+            // 
+            // sampleShapeToolStripMenuItem
+            // 
+            this.sampleShapeToolStripMenuItem.Name = "sampleShapeToolStripMenuItem";
+            this.sampleShapeToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.sampleShapeToolStripMenuItem.Text = "Sample shape";
+            this.sampleShapeToolStripMenuItem.Click += new System.EventHandler(this.sampleShapeToolStripMenuItem_Click);
+            // 
             // OpenCascadeViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -105,7 +123,7 @@ namespace OpenCascaseViewer
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "OpenCascadeViewer";
-            this.Text = "Form1";
+            this.Text = "Model Viewer";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -123,6 +141,8 @@ namespace OpenCascaseViewer
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sampleShapeToolStripMenuItem;
     }
 }
 
