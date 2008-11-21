@@ -104,7 +104,16 @@ namespace OpenCascaseViewer
                         MessageBox.Show("Unknown format \"" + type + "\"");
                         break;
                 }
-
+                gp.Pnt[] points = null;
+                gp.Pnt2d[] uvpoints = null;
+                int[] triangles = null;
+                drawingControl1.Clear();
+                
+                foreach (TopoDS.Shape shape in viewedShapes)
+                {
+                    Utility.Triangulate(shape, out points, out uvpoints, out triangles);
+                    drawingControl1.Fill(points, uvpoints, triangles);
+                }
             }
         }
 

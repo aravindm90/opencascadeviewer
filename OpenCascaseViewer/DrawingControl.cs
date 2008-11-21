@@ -22,8 +22,8 @@ namespace OpenCascaseViewer
 
         private Vector3 camera = new Vector3(0, 500, 550);
 
-        public VertexPositionNormalTexture[] vertexData;
-        public int[] indexDataTriangles;
+        public List<VertexPositionNormalTexture[]> vertexData;
+        public List<int[]> indexDataTriangles;
 
 
         protected override void Initialize()
@@ -59,24 +59,35 @@ namespace OpenCascaseViewer
             colorEffect.VertexColorEnabled = true;
             colorEffect.DiffuseColor = new Vector3(1.0f, 1.0f, 1.0f);
 
-            vertexData = new VertexPositionNormalTexture[3];
-            indexDataTriangles = new int[3];
+
+            vertexData = new List<VertexPositionNormalTexture[]>();
+            indexDataTriangles = new List<int[]>();
+        }
+
+        public void Clear()
+        {
+            indexDataTriangles.Clear();
+            vertexData.Clear();
         }
 
         public void Fill(gp.Pnt[] points, gp.Pnt2d[] uvpoints, int[] triangles)
         {
-            vertexData = new Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture[points.Length];
+            VertexPositionNormalTexture[] vertex = new Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture[points.Length];
+            
             for (int i = 0; i < points.Length; i++)
             {
                 Vector3 pos = new Vector3((float)points[i].x, (float)points[i].y, (float)points[i].z);
-                pos.X *= 50;
-                pos.Y *= 50;
+                //pos.X *= 50;
+                //pos.Y *= 50;
+                //pos.Z *= 0.1f;
                 pos *= 5;
                 Vector2 tex = new Vector2((float)uvpoints[i].x, (float)uvpoints[i].y);
-                vertexData[i] = new Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture(
+                vertex[i] = new Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture(
                     pos, Microsoft.Xna.Framework.Vector3.Up, tex);
             }
-            indexDataTriangles = triangles;
+
+            indexDataTriangles.Add(triangles);
+            vertexData.Add(vertex);
         }
 
         protected override void Draw()
@@ -102,14 +113,23 @@ namespace OpenCascaseViewer
             textureEffect.DirectionalLight0.Direction = Vector3.Normalize(new Vector3(1.0f, 1.0f, -1.0f));
             textureEffect.DirectionalLight0.SpecularColor = Vector3.One;
 
+            List<VertexPositionNormalTexture[]>.Enumerator vertexEnumerator = vertexData.GetEnumerator();
+            List<int[]>.Enumerator indexDataTrianglesEnumerator = indexDataTriangles.GetEnumerator();
+
             textureEffect.Begin();
 
             foreach (EffectPass pass in textureEffect.CurrentTechnique.Passes)
             {
                 pass.Begin();
-
-                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList,
-                    vertexData, 0, vertexData.Length, indexDataTriangles, 0, indexDataTriangles.Length / 3);              
+                vertexData.GetEnumerator();
+                while(vertexEnumerator.MoveNext() && indexDataTrianglesEnumerator.MoveNext())
+                {
+                    GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList,
+                    vertexEnumerator.Current, 0, vertexEnumerator.Current.Length, indexDataTrianglesEnumerator.Current, 0, 
+                    indexDataTrianglesEnumerator.Current.Length / 3);
+                }
+                /*GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(PrimitiveType.TriangleList,
+                    vertexData, 0, vertexData.Length, indexDataTriangles, 0, indexDataTriangles.Length / 3);              */
 
                 pass.End();
             }
