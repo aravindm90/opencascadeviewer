@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
+using System.ComponentModel;
 
 namespace OpenCascaseViewer
 {
@@ -25,6 +26,7 @@ namespace OpenCascaseViewer
         public List<VertexPositionNormalTexture[]> vertexData = new List<VertexPositionNormalTexture[]>();
         public List<int[]> indexData = new List<int[]>();
 
+        [EditorBrowsable(EditorBrowsableState.Never), Bindable(BindableSupport.No), Browsable(false)]
         public ModelData Model { get; set; }
 
         public void SyncBuffers()
@@ -46,13 +48,14 @@ namespace OpenCascaseViewer
             {
                 edge1 = new Vector3(
                     (float)(points[triangles[ind]].x - points[triangles[ind + 1]].x),
-                    (float)(points[triangles[ind]].x - points[triangles[ind + 1]].x),
-                    (float)(points[triangles[ind]].x - points[triangles[ind + 1]].x));
+                    (float)(points[triangles[ind]].y - points[triangles[ind + 1]].y),
+                    (float)(points[triangles[ind]].z - points[triangles[ind + 1]].z));
                 edge2 = new Vector3(
                     (float)(points[triangles[ind + 2]].x - points[triangles[ind + 1]].x),
-                    (float)(points[triangles[ind + 2]].x - points[triangles[ind + 1]].x),
-                    (float)(points[triangles[ind + 2]].x - points[triangles[ind + 1]].x));
+                    (float)(points[triangles[ind + 2]].y - points[triangles[ind + 1]].y),
+                    (float)(points[triangles[ind + 2]].z - points[triangles[ind + 1]].z));
                 Vector3.Cross(ref edge1, ref edge2, out normal);
+                normal.Normalize();
                 normals[triangles[ind]] += normal;
                 ++normalsCount[triangles[ind]];
                 normals[triangles[ind + 1]] += normal;
@@ -189,7 +192,7 @@ namespace OpenCascaseViewer
 
             if (newState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
-                float zDiff = (float)e.Delta / 4;
+                float zDiff = (float)e.Delta / 60.0f;
 
                 World *= Matrix.CreateTranslation(0.0f, 0.0f, zDiff);
 
