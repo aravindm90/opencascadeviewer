@@ -6,6 +6,14 @@ namespace OpenCascaseViewer
 {
     public class Utility
     {
+        public static TessalatedShape Triangulate(TopoDS.Shape topoShape)
+        {
+            TessalatedShape shape = new TessalatedShape();
+            Triangulate(topoShape, out shape.points, out shape.uvpoints, out shape.triangles);
+            shape.topoShape = topoShape;
+            return shape;
+        }
+
         public static void Triangulate(TopoDS.Shape topoShape, out gp.Pnt[] points, out gp.Pnt2d[] uvpoints, out int[] triangles)
         {
             TopExp.Explorer ex = new TopExp.Explorer(topoShape, TopAbs.ShapeEnum.FACE, TopAbs.ShapeEnum.SHAPE);

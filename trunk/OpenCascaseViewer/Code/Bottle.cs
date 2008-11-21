@@ -1,7 +1,7 @@
 using System;
 using OpenCascade; // this is the main namespace for all OpenCascade classes
 
-namespace OpenCascaseViewer.Code
+namespace OpenCascaseViewer
 {
    /// <summary>
    /// Class to implement the static MakeBottle method in C# as provideded as an
