@@ -21,7 +21,7 @@ namespace OpenCascaseViewer
         public Matrix World { get; set; }
         public Matrix Projection { get; set; }
 
-        private Vector3 camera = new Vector3(0, 0, 550);
+        private Vector3 camera = new Vector3(0, 0, 100);
 
         public List<VertexPositionNormalTexture[]> vertexData = new List<VertexPositionNormalTexture[]>();
         public List<int[]> indexData = new List<int[]>();
@@ -55,6 +55,12 @@ namespace OpenCascaseViewer
                     (float)(points[triangles[ind + 2]].y - points[triangles[ind + 1]].y),
                     (float)(points[triangles[ind + 2]].z - points[triangles[ind + 1]].z));
                 Vector3.Cross(ref edge1, ref edge2, out normal);
+                edge1 = new Vector3(
+                    (float)(points[triangles[ind]].x),
+                    (float)(points[triangles[ind]].y),
+                    (float)(points[triangles[ind]].z));
+                if (Vector3.Dot(normal, edge1) < 0)
+                    normal *= -1.0f;
                 normal.Normalize();
                 normals[triangles[ind]] += normal;
                 ++normalsCount[triangles[ind]];
@@ -190,14 +196,11 @@ namespace OpenCascaseViewer
             base.OnMouseWheel(e);
             MouseState newState = Mouse.GetState();
 
-            if (newState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
-            {
-                float zDiff = (float)e.Delta / 60.0f;
-
-                World *= Matrix.CreateScale(zDiff);
-
-                Invalidate();
-            }
+            float zDiff = (float)e.Delta / 120.0f;
+               
+            World *= Matrix.CreateScale((zDiff<0.0f?1.0f/-zDiff:zDiff));
+            
+            Invalidate();
             
             lastMouseState = newState;
         }
