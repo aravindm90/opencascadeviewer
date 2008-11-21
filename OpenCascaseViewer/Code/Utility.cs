@@ -16,6 +16,10 @@ namespace OpenCascaseViewer
             uvpoints = null;
             triangles = null;
 
+            List<gp.Pnt> pointsL = new List<gp.Pnt>();
+            List<gp.Pnt2d> uvpointL = new List<gp.Pnt2d>();
+            List<int> trianglesL = new List<int>();
+
             // Loop all faces
             while (ex.More())
             {
@@ -76,8 +80,16 @@ namespace OpenCascaseViewer
                     triangles[3 * i + 2] = t.Value(3) - 1;
                 }
 
+                pointsL.AddRange(points);
+                uvpointL.AddRange(uvpoints);
+                trianglesL.AddRange(triangles);
+
                 ex.Next();
             }
+
+            points = pointsL.ToArray();
+            uvpoints = uvpointL.ToArray();
+            triangles = trianglesL.ToArray();
         }
     }
 }
